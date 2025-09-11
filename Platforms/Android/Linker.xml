@@ -1,0 +1,16 @@
+﻿<linker>
+	<assembly fullname="System.Security.Cryptography" preserve="all"/>
+
+	<assembly fullname="System.Core" preserve="all"/>
+	<assembly fullname="System.Private.CoreLib" preserve="all"/>
+
+	<assembly fullname="fblib" preserve="all"/>
+
+	<assembly fullname="CommunityToolkit.Maui" preserve="all"/>
+	<assembly fullname="CommunityToolkit.Mvvm" preserve="all"/>
+	<assembly fullname="Syncfusion.Maui.Inputs" preserve="all"/>
+	<assembly fullname="Microsoft.ML.OnnxRuntime" preserve="all" />
+	<assembly fullname="SkiaSharp" preserve="all" />
+	<assembly fullname="Mopups" preserve="all" />
+	<assembly fullname="SQLite-net" preserve="all" />
+</linker>

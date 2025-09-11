@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="fbapp.Pages.FaceBiometric"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    Title="FACE">
+    <ScrollView>
+        <VerticalStackLayout Padding="5">
+            <Grid Padding="5" HorizontalOptions="FillAndExpand">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Label
+                    Grid.Column="0"
+                    FontAttributes="Bold"
+                    FontFamily=""
+                    FontSize="Large"
+                    HorizontalOptions="Start"
+                    Text="FRv2025.09.01.1"
+                    TextColor="#1ea883"
+                    VerticalOptions="Center" />
+
+                <Button
+                    x:Name="Offline"
+                    Grid.Column="1"
+                    Clicked="Offline_Clicked"
+                    HeightRequest="45"
+                    HorizontalOptions="End">
+                    <Button.ImageSource>
+                        <FontImageSource
+                            FontFamily="FontAwesomeSolid"
+                            Glyph="&#xe560;"
+                            Size="20" />
+                    </Button.ImageSource>
+                </Button>
+            </Grid>
+
+            <toolkit:CameraView
+                x:Name="cameraView"
+                HeightRequest="500"
+                MediaCaptured="cameraView_MediaCaptured" />
+
+            <HorizontalStackLayout
+                Padding="10,20,10,10"
+                HorizontalOptions="Center"
+                Spacing="10">
+
+                <Button
+                    x:Name="In"
+                    Clicked="IN1_Clicked"
+                    FontSize="10"
+                    HeightRequest="60"
+                    Text="Time In"
+                    WidthRequest="80" />
+
+                <Button
+                    x:Name="BreakOut"
+                    Clicked="BKOUT_Clicked"
+                    FontSize="10"
+                    HeightRequest="60"
+                    Text="Break Out"
+                    WidthRequest="80" />
+
+                <Button
+                    x:Name="BreakIn"
+                    Clicked="BKIN_Clicked"
+                    FontSize="10"
+                    HeightRequest="60"
+                    Text="Break In"
+                    WidthRequest="80" />
+
+                <Button
+                    x:Name="Out"
+                    Clicked="OUT_Clicked"
+                    FontSize="10"
+                    HeightRequest="60"
+                    Text="Time Out"
+                    WidthRequest="80" />
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

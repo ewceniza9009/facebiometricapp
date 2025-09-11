@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="fbapp.Pages.Upload"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:editors="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
+    xmlns:local="clr-namespace:fbapp.Converters"
+    Title="UPLOAD">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:LogTypeConverter x:Key="LogTypeConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <VerticalStackLayout Padding="5" Spacing="5">
+        <Grid Padding="5" HorizontalOptions="FillAndExpand">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Label
+                Padding="10"
+                FontAttributes="Bold"
+                FontFamily=""
+                FontSize="Large"
+                HorizontalOptions="Center"
+                Text="TIME LOGS"
+                TextColor="#1ea883"
+                VerticalOptions="Center" />
+            <Button
+                x:Name="Unlock"
+                Grid.Column="1"
+                Clicked="Unlock_Clicked"
+                HeightRequest="45"
+                HorizontalOptions="End">
+                <Button.ImageSource>
+                    <FontImageSource
+                        FontFamily="FontAwesomeSolid"
+                        Glyph="&#xf09c;"
+                        Size="20" />
+                </Button.ImageSource>
+            </Button>
+        </Grid>
+        <StackLayout
+            HorizontalOptions="FillAndExpand"
+            Orientation="Horizontal"
+            Spacing="5">
+            <Label
+                Padding="5,12,5,5"
+                Text="Log Date"
+                WidthRequest="100" />
+            <DatePicker
+                x:Name="StartDateFilter"
+                Date="{Binding StartDate}"
+                HorizontalOptions="FillAndExpand" />
+            <DatePicker
+                x:Name="EndDateFilter"
+                Date="{Binding EndDate}"
+                HorizontalOptions="FillAndExpand" />
+        </StackLayout>
+
+        <StackLayout
+            HorizontalOptions="FillAndExpand"
+            Orientation="Horizontal"
+            Spacing="5">
+            <Label
+                Padding="5,12,5,5"
+                Text="Employee"
+                WidthRequest="100" />
+
+            <editors:SfAutocomplete
+                x:Name="EmployeeEntry"
+                HighlightedTextColor="#2cf0bc"
+                HorizontalOptions="FillAndExpand"
+                Placeholder="Type employee name"
+                SelectedItem="Name"
+                SelectionTextHighlightColor="#2cf0bc"
+                TextSearchMode="Contains" />
+            <Button x:Name="Search" WidthRequest="50">
+                <Button.ImageSource>
+                    <FontImageSource
+                        FontFamily="FontAwesomeSolid"
+                        Glyph="&#xf002;"
+                        Size="15" />
+                </Button.ImageSource>
+            </Button>
+        </StackLayout>
+
+        <StackLayout
+            Margin="0,5,0,0"
+            Orientation="Horizontal"
+            Spacing="5">
+            <Label
+                Padding="5,10,0,0"
+                FontSize="20"
+                HorizontalOptions="StartAndExpand"
+                Text="LOGS"
+                TextColor="#1ea883" />
+            <Button
+                x:Name="UploadLogButton"
+                Clicked="UploadLogButton_Clicked"
+                ContentLayout="Left, 10"
+                HorizontalOptions="End"
+                ImageSource="{FontImageSource FontFamily='FontAwesomeSolid',
+                                              Glyph='&#xf093;',
+                                              Size=15}"
+                Text="UPLOAD"
+                WidthRequest="120" />
+        </StackLayout>
+
+        <ListView
+            x:Name="Logs"
+            HasUnevenRows="True"
+            HeightRequest="500">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout
+                            Padding="5"
+                            MaximumHeightRequest="100"
+                            Orientation="Horizontal"
+                            Spacing="5">
+                            <Label
+                                Text="{Binding BioId}"
+                                VerticalOptions="Center"
+                                WidthRequest="50" />
+                            <Label
+                                HorizontalOptions="FillAndExpand"
+                                Text="{Binding Name}"
+                                VerticalOptions="Center" />
+                            <Label
+                                Text="{Binding LogType, Converter={StaticResource LogTypeConverter}}"
+                                VerticalOptions="Center"
+                                WidthRequest="50" />
+                            <Label
+                                Text="{Binding Log}"
+                                VerticalOptions="Center"
+                                WidthRequest="150" />
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </VerticalStackLayout>
+</ContentPage>

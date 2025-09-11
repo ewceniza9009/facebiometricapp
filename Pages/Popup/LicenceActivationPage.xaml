@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="fbapp.Pages.Popup.LicenseActivationPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    BackgroundColor="White">
+    <VerticalStackLayout
+        Margin="20"
+        Padding="20"
+        BackgroundColor="White"
+        HorizontalOptions="Center"
+        Spacing="15"
+        VerticalOptions="Center"
+        WidthRequest="350">
+
+        <Label
+            FontAttributes="Bold"
+            FontSize="22"
+            HorizontalTextAlignment="Center"
+            Text="Software Activation" />
+
+        <Label
+            FontSize="14"
+            HorizontalTextAlignment="Center"
+            Text="Please provide the following information to activate the software." />
+
+        <Frame
+            Padding="10"
+            BorderColor="LightGray"
+            CornerRadius="5">
+            <VerticalStackLayout Spacing="5">
+                <Label FontAttributes="Bold" Text="Device ID" />
+                <Grid ColumnDefinitions="*,Auto">
+                    <Entry
+                        x:Name="DeviceIdEntry"
+                        IsReadOnly="True"
+                        TextColor="Gray" />
+                    <Button
+                        x:Name="CopyButton"
+                        Grid.Column="1"
+                        BackgroundColor="#92c153"
+                        Clicked="CopyButton_Clicked"
+                        Text="Copy" />
+                </Grid>
+            </VerticalStackLayout>
+        </Frame>
+
+        <Frame
+            Padding="10"
+            BorderColor="LightGray"
+            CornerRadius="5">
+            <VerticalStackLayout Spacing="5">
+                <Label FontAttributes="Bold" Text="License Key" />
+                <Editor
+                    x:Name="LicenseKeyEditor"
+                    HeightRequest="100"
+                    Placeholder="Paste your license key here" />
+            </VerticalStackLayout>
+        </Frame>
+
+        <Button
+            x:Name="ActivateButton"
+            Clicked="ActivateButton_Clicked"
+            FontAttributes="Bold"
+            Text="Activate &amp; Restart"
+            TextColor="White" />
+
+    </VerticalStackLayout>
+</ContentPage>

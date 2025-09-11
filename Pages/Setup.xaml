@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="fbapp.Pages.Setup"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="SETUP">
+    <VerticalStackLayout Padding="5" Spacing="5">
+        <Grid Padding="5" HorizontalOptions="FillAndExpand">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Label
+                Padding="10,0,5,0"
+                FontAttributes="Bold"
+                FontSize="Large"
+                HorizontalOptions="Center"
+                Text="BIOMETRIC SETUP"
+                TextColor="#1ea883"
+                VerticalOptions="Center" />
+            <Button
+                x:Name="Unlock"
+                Grid.Column="1"
+                Clicked="Unlock_Clicked"
+                HeightRequest="45"
+                HorizontalOptions="End">
+                <Button.ImageSource>
+                    <FontImageSource
+                        FontFamily="FontAwesomeSolid"
+                        Glyph="&#xf09c;"
+                        Size="20" />
+                </Button.ImageSource>
+            </Button>
+        </Grid>
+        <Entry
+            x:Name="hrisApiUrl"
+            HorizontalOptions="FillAndExpand"
+            Placeholder="Enter HRIS API Url"
+            VerticalOptions="Center" />
+        <Entry
+            x:Name="adminPassword"
+            HorizontalOptions="FillAndExpand"
+            IsPassword="True"
+            Placeholder="Enter Admin Password"
+            VerticalOptions="Center" />
+        <HorizontalStackLayout
+            x:Name="peripheralPropsInput"
+            HorizontalOptions="FillAndExpand"
+            Spacing="5"
+            VerticalOptions="Center">
+            <Entry
+                x:Name="currentBioId"
+                IsEnabled="false"
+                IsVisible="Collapse"
+                Placeholder="Enter BiometricId"
+                VerticalOptions="Center"
+                WidthRequest="50" />
+            <Entry
+                x:Name="camera"
+                Placeholder="Enter camera"
+                VerticalOptions="Center"
+                WidthRequest="100" />
+            <Entry
+                x:Name="cameraRotation"
+                HorizontalTextAlignment="End"
+                Placeholder="Enter camera rotation in degrees"
+                VerticalOptions="Center"
+                WidthRequest="50" />
+            <Entry
+                x:Name="doublePunchInterval"
+                HorizontalTextAlignment="End"
+                Placeholder="Enter double punch interval restriction"
+                VerticalOptions="Center"
+                WidthRequest="50" />
+            <Button
+                x:Name="CmdImportData"
+                Clicked="ImportData_Clicked"
+                Text="IMPORT"
+                WidthRequest="60" />
+            <Button
+                x:Name="CmdExportData"
+                Clicked="ExportData_Clicked"
+                Text="EXPORT"
+                WidthRequest="60" />
+        </HorizontalStackLayout>
+
+        <Button
+            x:Name="CmdSaveSettings"
+            Clicked="SaveSettings_Clicked"
+            Text="SAVE SETTINGS"
+            WidthRequest="150" />
+
+        <Label
+            Padding="5"
+            Text="REGISTERED EMPLOYEES"
+            TextColor="#1ea883" />
+
+        <SearchBar
+            x:Name="EmployeeSearchBar"
+            Placeholder="Search by name..."
+            TextChanged="EmployeeSearchBar_TextChanged" />
+
+        <StackLayout
+            x:Name="NoItems"
+            Padding="20"
+            HorizontalOptions="Center"
+            VerticalOptions="Center">
+            <Label HorizontalTextAlignment="Center" Text="Please unlock the page to load all registered employees." />
+        </StackLayout>
+
+        <StackLayout
+            x:Name="Loading"
+            HorizontalOptions="Center"
+            VerticalOptions="Center">
+            <Label Text="Loading..." />
+        </StackLayout>
+
+        <ListView
+            x:Name="EmployeeListView"
+            HasUnevenRows="True"
+            HeightRequest="300"
+            IsVisible="{Binding isListVisible}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Padding="5" Orientation="Horizontal">
+                            <Label
+                                Margin="5,0,0,0"
+                                Text="{Binding biometricId}"
+                                TextColor="Blue"
+                                VerticalOptions="Center"
+                                WidthRequest="50">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding BindingContext.BiometricIdTappedCommand, Source={x:Reference EmployeeListView}}" CommandParameter="{Binding biometricId}" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                            <Label
+                                Margin="20,0,0,0"
+                                HorizontalOptions="StartAndExpand"
+                                Text="{Binding name}"
+                                VerticalOptions="Center" />
+                            <Button
+                                x:Name="DeleteEmployee"
+                                BackgroundColor="Red"
+                                Command="{Binding BindingContext.DeleteCommand, Source={x:Reference EmployeeListView}}"
+                                CommandParameter="{Binding biometricId}"
+                                HeightRequest="32"
+                                WidthRequest="36">
+                                <Button.ImageSource>
+                                    <FontImageSource
+                                        FontAutoScalingEnabled="True"
+                                        FontFamily="FontAwesomeSolid"
+                                        Glyph="&#xf1f8;"
+                                        Size="15" />
+                                </Button.ImageSource>
+                            </Button>
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </VerticalStackLayout>
+</ContentPage>
