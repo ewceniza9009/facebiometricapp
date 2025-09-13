@@ -74,6 +74,11 @@
 		<PackageReference Include="sqlite-net-pcl" Version="1.10.196-beta" />
 		<PackageReference Include="Syncfusion.Maui.Inputs" Version="26.1.35" />
 		<PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.22.1" AndroidAotMode="Interpreted" />
+		<PackageReference Include="HNSWIndex" Version="1.4.1" />
+		<PackageReference Include="FaceONNX" Version="4.0.4.2" />
+		<PackageReference Include="FaceONNX.Addons" Version="4.0.4.2" />
+		<PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.18.0" />
+		<PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />
 	</ItemGroup>
 
 	<ItemGroup>

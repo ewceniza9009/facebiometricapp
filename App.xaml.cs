@@ -3,6 +3,7 @@ using fbapp.Pages.Popup;
 using fbapp.Services;
 using fblib;
 using Microsoft.Extensions.DependencyInjection;
+using Syncfusion.Licensing;
 using System;
 using System.Diagnostics;
 using System.Security.Cryptography;
@@ -18,6 +19,9 @@ namespace fbapp
         {
             InitializeComponent();
             _services = services;
+
+            SyncfusionLicenseProvider.RegisterLicense("MzcxM0AzMjMwMkUzNDJFMzBpYnpCR0U4NjhVTjR2QWFIRkZHa2VHOGI3N1JRYlFKQ3dYbk5iTE9JTmdFPQ==");
+
             MainPage = _services.GetRequiredService<MainPage>();
         }
 
