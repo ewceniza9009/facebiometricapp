@@ -62,6 +62,7 @@ public partial class Setup : ContentPage
                 camera.Text = setting.Camera;
                 cameraRotation.Text = setting.ImageRotate.ToString();
                 doublePunchInterval.Text = setting.DoublePunchInterval.ToString();
+                BypassCheckBox.IsChecked = setting.BypassRestriction;
             }
         }
         catch (Exception ex)
@@ -87,7 +88,8 @@ public partial class Setup : ContentPage
             EmployeeListView.IsEnabled = enable;
             CmdImportData.IsEnabled = enable;
             CmdExportData.IsEnabled = enable;
-            EmployeeSearchBar.IsEnabled = enable;    
+            EmployeeSearchBar.IsEnabled = enable;
+            BypassCheckBox.IsEnabled = enable;
             isPageEnabled = enable;
 
             if (!enable)
@@ -127,7 +129,8 @@ public partial class Setup : ContentPage
                 Camera = camera.Text,
                 ImageRotate = int.Parse(cameraRotation.Text),
                 DoublePunchInterval = int.Parse(doublePunchInterval.Text),
-                CurrentPassword = adminPassword.Text
+                CurrentPassword = adminPassword.Text,
+                BypassRestriction = BypassCheckBox.IsChecked
             };
             await _db.SaveSettingAsync(setting);
             DisplayMessage("Settings", "Settings are saved. Please restart the app for some changes to take effect.");
@@ -304,6 +307,12 @@ public partial class Setup : ContentPage
         {
             DisplayMessage("Error", $"Failed to load image: {ex.Message}");
         }
+    }
+    public static bool BypassRestriction { get; private set; }
+
+    private void BypassCheckBox_CheckedChanged(object sender, CheckedChangedEventArgs e)
+    {
+        BypassRestriction = e.Value; // true if checked
     }
 
     private async void DeleteEmployee(string biometricId)

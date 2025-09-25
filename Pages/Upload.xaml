@@ -29,6 +29,7 @@
                 VerticalOptions="Center" />
             <Button
                 x:Name="Unlock"
+                IsEnabled="False"
                 Grid.Column="1"
                 Clicked="Unlock_Clicked"
                 HeightRequest="45"
@@ -96,16 +97,17 @@
                 HorizontalOptions="StartAndExpand"
                 Text="LOGS"
                 TextColor="#1ea883" />
-            <Button
+            <!--<Button
                 x:Name="UploadLogButton"
                 Clicked="UploadLogButton_Clicked"
+                IsEnabled="False"
                 ContentLayout="Left, 10"
                 HorizontalOptions="End"
                 ImageSource="{FontImageSource FontFamily='FontAwesomeSolid',
                                               Glyph='&#xf093;',
                                               Size=15}"
                 Text="UPLOAD"
-                WidthRequest="120" />
+                WidthRequest="120" />-->
         </StackLayout>
 
         <ListView

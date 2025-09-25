@@ -84,6 +84,12 @@
                 WidthRequest="60" />
         </HorizontalStackLayout>
 
+        <StackLayout Orientation="Horizontal" VerticalOptions="Center">
+            <CheckBox x:Name="BypassCheckBox"
+              CheckedChanged="BypassCheckBox_CheckedChanged" />
+            <Label Text="Bypass Interval Restriction" VerticalOptions="Center" />
+        </StackLayout>
+
         <Button
             x:Name="CmdSaveSettings"
             Clicked="SaveSettings_Clicked"

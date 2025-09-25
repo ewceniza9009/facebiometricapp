@@ -17,6 +17,7 @@ public partial class Upload : ContentPage
     private HttpClient _httpClient;
     private string hrisApiUrl = "NA";
     private bool isPageEnabled = false;
+   // private Timer _timer;
 
     public Upload()
     {
@@ -39,12 +40,24 @@ public partial class Upload : ContentPage
         _vm.SearchLog = SearchLog;
 
         BindingContext = _vm;
+
+        //_timer = new Timer(async (e) =>
+        //{
+        //    try
+        //    {
+        //        await UploadLogs();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Timer error: {ex.Message}");
+        //    }
+        //}, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        EnablePage(false);
+        EnablePage(true);
 
         try
         {
@@ -86,10 +99,60 @@ public partial class Upload : ContentPage
             EndDateFilter.IsEnabled = enable;
             EmployeeEntry.IsEnabled = enable;
             Search.IsEnabled = enable;
-            UploadLogButton.IsEnabled = enable;
+            //UploadLogButton.IsEnabled = enable; uncomment this to bring back the upload button
             Logs.IsEnabled = enable;
             isPageEnabled = enable;
         });
+    }
+
+    public async Task UploadLogs() 
+    {
+        var uploadLogs = logs?.Where(x => x.Name == "OFFLINE").ToList();
+
+        if (uploadLogs == null || !uploadLogs.Any())
+        {
+            //DisplayMessage("Info", "No OFFLINE logs found to upload.");
+
+            //Dispatcher.Dispatch(() =>
+            //{
+            //    SearchLog();
+            //});
+
+            return;
+        }
+
+        var toUploadLogs = uploadLogs.Select(log => new LogBiometricDataRequestDto
+        {
+            BiometricIdNumber = log.BioId,
+            LogDateTime = new DateTimeOffset(log.Log).ToString("o"),
+            LogType = log.LogType,
+        }).ToList();
+
+        try
+        {
+            var responseLogPost = await _httpClient.PostAsJsonAsync($"{hrisApiUrl}/MobileRepPayroll/InsertOfflineLogs", toUploadLogs);
+
+            if (responseLogPost.IsSuccessStatusCode)
+            {
+                DisplayMessage("Success", "All offline logs have been uploaded.");
+                //await _db.DeleteDTROfflineLogsByBioIdAsync();
+
+                Dispatcher.Dispatch(() =>
+                {
+                    SearchLog();
+                });
+
+            }
+            else
+            {
+                var error = await responseLogPost.Content.ReadAsStringAsync();
+                DisplayMessage("Upload Failed", $"The server returned an error: {error}");
+            }
+        }
+        catch (Exception ex)
+        {
+            DisplayMessage("Error", $"An error occurred during upload: {ex.Message}");
+        }
     }
 
     private async void UploadLogButton_Clicked(object sender, EventArgs e)
@@ -116,7 +179,7 @@ public partial class Upload : ContentPage
             if (responseLogPost.IsSuccessStatusCode)
             {
                 DisplayMessage("Success", "All offline logs have been uploaded.");
-                await _db.DeleteDTROfflineLogsByBioIdAsync();
+                //await _db.DeleteDTROfflineLogsByBioIdAsync();
                 SearchLog();
             }
             else

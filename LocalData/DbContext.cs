@@ -125,5 +125,22 @@ namespace fbapp.LocalData
                 .Where(i => i.Name == "OFFLINE")
                 .DeleteAsync();
         }
+
+        public async Task<int> CleanUpOfflineLogsAsync()
+        {
+            var logs = await _database.Table<DTRLog>()
+                .Where(i => i.Name.Contains("OFFLINE"))
+                .ToListAsync();
+
+            foreach (var log in logs)
+            {
+                // remove the "OFFLINE" part from the name
+                log.Name = log.Name.Replace("OFFLINE", "");
+                await _database.UpdateAsync(log);
+            }
+
+            return logs.Count;
+        }
+
     }
 }

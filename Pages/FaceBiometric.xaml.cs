@@ -1,3 +1,4 @@
+using Plugin.Maui.Audio;
 using CommunityToolkit.Maui.Views;
 using fbapp.LocalData;
 using fbapp.Pages.Popup;
@@ -8,26 +9,34 @@ using Mopups.Services;
 using SkiaSharp;
 using System.Net.Http.Json;
 using System.Xml.Linq;
+using System.Diagnostics.CodeAnalysis;
 
 namespace fbapp.Pages;
 
 public partial class FaceBiometric : ContentPage
 {
     private readonly DbContext _db;
+    private readonly UploadViewModel _vm;
     private HttpClient _hrisApiClient;
     private string messageTitle = string.Empty;
     private string logType = string.Empty;
     private readonly LoadingPopup _loadingPopup;
     private int cameraRotation = 0;
-    private bool isOffline = false;
+    private bool isOffline = true;
     private readonly LocalFaceRecognizeService _faceRecognizeService = ServiceHelper.LocalFaceRecognizeService;
     private string hrisApiUrl = "NA";
+    private List<DTRLog>? logs;
+    private HttpClient _httpClient;
+    private Timer _timer;
+    private readonly IAudioManager _audioManager;
 
     public FaceBiometric()
     {
         InitializeComponent();
 
         _db = new DbContext(Global.dbPath);
+        _vm = new UploadViewModel();
+        _audioManager = AudioManager.Current;
         _loadingPopup = new LoadingPopup();
 
         var handler = new HttpClientHandler
@@ -38,6 +47,21 @@ public partial class FaceBiometric : ContentPage
             }
         };
         _hrisApiClient = new HttpClient(handler);
+        _httpClient = new HttpClient(handler);
+        _vm.StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+        _vm.EndDate = DateTime.Now;    
+
+        _timer = new Timer(async (e) =>
+        {
+            try
+            {
+                await UploadLogs();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Timer error: {ex.Message}");
+            }
+        }, null, TimeSpan.Zero, TimeSpan.FromMinutes(5));
     }
 
     protected override async void OnAppearing()
@@ -47,6 +71,8 @@ public partial class FaceBiometric : ContentPage
 
         try
         {
+            logs = await _db.GetDTRLogsQueryAsync(_vm.StartDate, _vm.EndDate);
+            _vm._allSuggestions = logs.GroupBy(x => x.Name).Select(y => y.Key).ToList();
             var setting = await _db.GetSettingFirstAsync();
             if (setting != null)
             {
@@ -92,7 +118,7 @@ public partial class FaceBiometric : ContentPage
     {
         return MainThread.InvokeOnMainThreadAsync(() => Application.Current?.MainPage?.DisplayPromptAsync(title, message, placeholder: placeholder));
     }
-
+    
     private async Task UploadImageAsync(Stream photoStream, string title, string logType)
     {
         try
@@ -148,26 +174,49 @@ public partial class FaceBiometric : ContentPage
                 }
 
                 if (logType is not "I")
-                {
-                    var bkInLog = await _db.GetDTRLogByBioIdAsync(biometricId, "I");
-                    if (bkInLog is null)
+                 {         
+                        var bkInLog = await _db.GetDTRLogByBioIdAsync(biometricId, "1");
+                        var bkOutLog = await _db.GetDTRLogByBioIdAsync(biometricId, "0");
+                        var timeIn = await _db.GetDTRLogByBioIdAsync(biometricId, "I");
+
+                    if (logType == "0") 
                     {
-                        DisplayMessage("Info", "Please swipe 'Time In' first.");
+                        if (!setting.BypassRestriction)
+                        {
+                            if (timeIn is null)
+                            {
+                                DisplayMessage("Info", "Please swipe 'Time In' first.");
+                                return;
+                            }
+                        }
+                    }
+                        if (timeIn is null)
+                        {
+                            //DisplayMessage("Info", "Please swipe 'Time In' first.");
+                            //return;
+                        }
+
+                  
+                    if (logType == "1" && bkOutLog is null && timeIn is not null)
+                    {
+                        DisplayMessage("Info", "BreakOut Required");
                         return;
                     }
 
                     if (bkInLog is not null)
-                    {
-                        var interval = (logNow - bkInLog.Log).TotalMinutes;
-
-                        if (interval <= intervalRestriction)
                         {
-                            DisplayMessage("Info", $"Cannot swipe '{logTypeString}' until {bkInLog.Log.AddMinutes(intervalRestriction).ToLongTimeString()}.");
-                            return;
+                            var interval = (logNow - bkInLog.Log).TotalMinutes;
+
+                            if (interval <= intervalRestriction)
+                            {
+                                DisplayMessage("Info", $"Cannot swipe '{logTypeString}' until {bkInLog.Log.AddMinutes(intervalRestriction).ToLongTimeString()}.");
+                                return;
+                            }
                         }
-                    }
+                    
                 }
 
+                
                 bool confirm = await Confirm($":{title}:", $"Biometric Id: {biometricId}\nName: {name}\nLog Time: {logNow:T}");
 
                 if (!confirm) return;
@@ -198,13 +247,17 @@ public partial class FaceBiometric : ContentPage
                 }
                 else
                 {
-                    await _db.SaveDTRLogAsync(new DTRLog { BioId = biometricId, Name = "OFFLINE", LogType = logType, Log = logNow });
+                    await _db.SaveDTRLogAsync(new DTRLog { BioId = biometricId, Name = name + " OFFLINE", LogType = logType, Log = logNow });
+                    // Play sound after saving
+                    var player = _audioManager.CreatePlayer(
+                        await FileSystem.OpenAppPackageFileAsync("yeaBuddy.mp3"));
+                    player.Play();
                 }
 
-                if (logType is "O")
-                {
-                    await _db.DeleteDTRLogsByBioIdAsync(biometricId);
-                }
+                //if (logType is "O")
+                //{
+                //    await _db.DeleteDTRLogsByBioIdAsync(biometricId);
+                //}
             }
             else
             {
@@ -286,28 +339,28 @@ public partial class FaceBiometric : ContentPage
 
     private async void IN1_Clicked(object sender, EventArgs e)
     {
-        messageTitle = "Time In";
+        messageTitle = "TIME IN";
         logType = "I";
         await cameraView.CaptureImage(CancellationToken.None);
     }
 
     private async void BKOUT_Clicked(object sender, EventArgs e)
     {
-        messageTitle = "Break Out";
+        messageTitle = "BREAK OUT";
         logType = "0";
         await cameraView.CaptureImage(CancellationToken.None);
     }
 
     private async void BKIN_Clicked(object sender, EventArgs e)
     {
-        messageTitle = "Break In";
+        messageTitle = "BREAK IN";
         logType = "1";
         await cameraView.CaptureImage(CancellationToken.None);
     }
 
     private async void OUT_Clicked(object sender, EventArgs e)
     {
-        messageTitle = "Time Out";
+        messageTitle = "TIME OUT";
         logType = "O";
         await cameraView.CaptureImage(CancellationToken.None);
     }
@@ -361,6 +414,51 @@ public partial class FaceBiometric : ContentPage
         catch (Exception ex)
         {
             DisplayMessage("Error", $"An error occurred: {ex.Message}");
+        }
+    }
+
+    public async Task UploadLogs()
+    {
+        logs = await _db.GetDTRLogsQueryAsync(DateTime.Now.AddMonths(-1), DateTime.Now);
+        var uploadLogs = logs?.Where(x => x.Name.Contains("OFFLINE")).ToList();
+
+        if (uploadLogs == null || !uploadLogs.Any())
+        {
+            //DisplayMessage("Info", "No OFFLINE logs found to upload.");
+
+            //Dispatcher.Dispatch(() =>
+            //{
+            //    SearchLog();
+            //});
+
+            return;
+        }
+
+        var toUploadLogs = uploadLogs.Select(log => new LogBiometricDataRequestDto
+        {
+            BiometricIdNumber = log.BioId,
+            LogDateTime = new DateTimeOffset(log.Log).ToString("o"),
+            LogType = log.LogType,
+        }).ToList();
+
+        try
+        {
+            var responseLogPost = await _httpClient.PostAsJsonAsync($"{hrisApiUrl}/MobileRepPayroll/InsertOfflineLogs", toUploadLogs);
+
+            if (responseLogPost.IsSuccessStatusCode)
+            {
+                //DisplayMessage("Success", "All offline logs have been uploaded.");
+                await _db.CleanUpOfflineLogsAsync();
+            }
+            else
+            {
+                var error = await responseLogPost.Content.ReadAsStringAsync();
+               //DisplayMessage("Upload Failed", $"The server returned an error: {error}");
+            }
+        }
+        catch (Exception ex)
+        {
+            //DisplayMessage("Error", $"An error occurred during upload: {ex.Message}");
         }
     }
 }

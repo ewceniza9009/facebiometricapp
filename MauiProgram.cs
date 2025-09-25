@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Mopups.Hosting;
 using Syncfusion.Maui.Core.Hosting;
 using System.Diagnostics;
+using Plugin.Maui.Audio;
 
 public static class MauiProgram
 {
@@ -39,6 +40,8 @@ public static class MauiProgram
         // Register the file services for dependency injection
         builder.Services.AddSingleton<IFileSaver>(FileSaver.Default);
         builder.Services.AddSingleton<IFilePicker>(FilePicker.Default);
+        builder.Services.AddSingleton(AudioManager.Current);
+
 
         // Register all your pages and simple services
         //builder.Services.AddSingleton<LocalFaceRecognizeService>();

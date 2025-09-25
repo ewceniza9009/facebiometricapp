@@ -18,5 +18,6 @@ namespace fbapp.LocalData
 		public string Camera { get; set; } = "front";
 		public int ImageRotate { get; set; } = 270;
 		public int DoublePunchInterval { get; set; } = 120;
-	}
+        public bool BypassRestriction { get; set; }
+    }
 }
