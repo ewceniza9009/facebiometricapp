@@ -64,13 +64,15 @@ public partial class Upload : ContentPage
             var setting = await _db.GetSettingFirstAsync();
             hrisApiUrl = setting?.HRISApiURL ?? string.Empty;
 
-            _vm.StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            //_vm.StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            _vm.StartDate = DateTime.Now;
             _vm.EndDate = DateTime.Now;
 
             logs = await _db.GetDTRLogsQueryAsync(_vm.StartDate, _vm.EndDate);
             _vm._allSuggestions = logs.GroupBy(x => x.Name).Select(y => y.Key).ToList();
 
             EmployeeEntry.ItemsSource = _vm._allSuggestions;
+            SearchLog();
         }
         catch (Exception ex)
         {

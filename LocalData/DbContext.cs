@@ -84,13 +84,15 @@ namespace fbapp.LocalData
 					.Where(x => x.Log.Date >= startDate.Date &&
 								x.Log.Date <= endDate.Date &&
 								x.Name.ToLower().Contains(name.ToLower()))
-					.ToList();
+                    .OrderByDescending(x => x.Log)
+                    .ToList();
 			}
 
 			var result = logs
 				.Where(x => x.Log.Date >= startDate.Date &&
 							x.Log.Date <= endDate.Date)
-				.ToList();
+                .OrderByDescending(x => x.Log)
+                .ToList();
 
 			return result;
 		}
