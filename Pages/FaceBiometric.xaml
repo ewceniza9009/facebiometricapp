@@ -19,7 +19,7 @@
                     FontFamily=""
                     FontSize="Large"
                     HorizontalOptions="Start"
-                    Text="FRv2025.09.22.1"
+                    Text="FRv2025.09.27.1"
                     TextColor="#1ea883"
                     VerticalOptions="Center" />
 
@@ -29,8 +29,7 @@
                     Clicked="Offline_Clicked"
                     HeightRequest="45"
                     HorizontalOptions="End"
-                    IsEnabled="False"
-                    >
+                    IsEnabled="False">
                     <Button.ImageSource>
                         <FontImageSource
                             FontFamily="FontAwesomeSolid"
