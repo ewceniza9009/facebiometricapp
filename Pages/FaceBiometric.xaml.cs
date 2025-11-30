@@ -174,10 +174,10 @@ public partial class FaceBiometric : ContentPage
                 }
 
                 if (logType is not "I")
-                 {         
-                        var bkInLog = await _db.GetDTRLogByBioIdAsync(biometricId, "1");
-                        var bkOutLog = await _db.GetDTRLogByBioIdAsync(biometricId, "0");
-                        var timeIn = await _db.GetDTRLogByBioIdAsync(biometricId, "I");
+                {         
+                    var bkInLog = await _db.GetDTRLogByBioIdAsync(biometricId, "1");
+                    var bkOutLog = await _db.GetDTRLogByBioIdAsync(biometricId, "0");
+                    var timeIn = await _db.GetDTRLogByBioIdAsync(biometricId, "I");
 
                     if (logType == "0") 
                     {
@@ -190,11 +190,12 @@ public partial class FaceBiometric : ContentPage
                             }
                         }
                     }
-                        if (timeIn is null)
-                        {
-                            //DisplayMessage("Info", "Please swipe 'Time In' first.");
-                            //return;
-                        }
+
+                    if (timeIn is null)
+                    {
+                        //DisplayMessage("Info", "Please swipe 'Time In' first.");
+                        //return;
+                    }
 
                   
                     if (logType == "1" && bkOutLog is null && timeIn is not null)
@@ -204,18 +205,16 @@ public partial class FaceBiometric : ContentPage
                     }
 
                     if (bkInLog is not null)
+                    {
+                        var interval = (logNow - bkInLog.Log).TotalMinutes;
+
+                        if (interval <= intervalRestriction)
                         {
-                            var interval = (logNow - bkInLog.Log).TotalMinutes;
-
-                            if (interval <= intervalRestriction)
-                            {
-                                DisplayMessage("Info", $"Cannot swipe '{logTypeString}' until {bkInLog.Log.AddMinutes(intervalRestriction).ToLongTimeString()}.");
-                                return;
-                            }
+                            DisplayMessage("Info", $"Cannot swipe '{logTypeString}' until {bkInLog.Log.AddMinutes(intervalRestriction).ToLongTimeString()}.");
+                            return;
                         }
-                    
+                    }                    
                 }
-
                 
                 bool confirm = await Confirm($":{title}:", $"Biometric Id: {biometricId}\nName: {name}\nLog Time: {logNow:T}");
 
