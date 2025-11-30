@@ -7,11 +7,13 @@
 		<AndroidSigningKeyAlias>$(AndroidSigningKeyAlias)</AndroidSigningKeyAlias>
 		<AndroidSigningKeyPass>$(AndroidSigningKeyPass)</AndroidSigningKeyPass>
 		<AndroidSigningStorePass>$(AndroidSigningStorePass)</AndroidSigningStorePass>
+		<CheckEolWorkloads>false</CheckEolWorkloads>
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<TargetFrameworks>net8.0-android</TargetFrameworks>
+		<TargetFrameworks>net8.0-android34.0</TargetFrameworks>
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
+		
 		<OutputType>Exe</OutputType>
 		<RootNamespace>fbapp</RootNamespace>
 		<UseMaui>true</UseMaui>
@@ -22,10 +24,16 @@
 		<ApplicationId>com.companyname.fbapp</ApplicationId>
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
+
+		<TargetPlatformVersion>34.0</TargetPlatformVersion>
+
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
+		
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
+		
+		<CheckEolWorkloads>false</CheckEolWorkloads>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|AnyCPU'">
@@ -59,15 +67,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <LinkDescription Include="Platforms\Android\Linker.xml" />
+	  <LinkDescription Include="Platforms\Android\Linker.xml" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="9.0.3" />
 		<PackageReference Include="CommunityToolkit.Maui.Camera" Version="1.0.4" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
+		
+		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.100" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.100" />
+		
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
 		<PackageReference Include="Mopups" Version="1.3.1" />
 		<PackageReference Include="Plugin.Maui.Audio" Version="3.1.1" />
@@ -103,13 +113,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Lib\" />
+	  <Folder Include="Lib\" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Reference Include="fblib">
-	    <HintPath>Lib\fblib.dll</HintPath>
-	  </Reference>
+	  <Reference Include="fblib">
+	    <HintPath>Lib\fblib.dll</HintPath>
+	  </Reference>
 	</ItemGroup>
 
 </Project>
