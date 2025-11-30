@@ -64,6 +64,12 @@
 2. dotnet build -f net8.0-android34.0
 3. dotnet run -f net8.0-android34.0
 
+## Publishing
+
+1. dotnet clean
+2. dotnet publish -c Release -f net8.0-android34.0
+3. `[Your Project Folder]\bin\Release\net8.0-android\publish\`
+
 ## Wireless Debugging
 
 1. adb pair 192.168.1.15:35441

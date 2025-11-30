@@ -29,6 +29,7 @@ public partial class FaceBiometric : ContentPage
     private HttpClient _httpClient;
     private Timer _timer;
     private readonly IAudioManager _audioManager;
+    private const int eight_hours_in_minutes = 60 * 8;
 
     public FaceBiometric()
     {
@@ -165,6 +166,12 @@ public partial class FaceBiometric : ContentPage
                 if (dtrLog is not null)
                 {
                     var interval = (logNow - dtrLog.Log).TotalMinutes;
+
+                    if (logType == "I" && interval <= eight_hours_in_minutes) 
+                    {
+                        DisplayMessage("Info", $"You have already swiped '{logTypeString}' in this shift on {dtrLog.Log.ToLongTimeString()}.");
+                        return;
+                    }
 
                     if (interval <= intervalRestriction)
                     {
