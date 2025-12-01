@@ -106,7 +106,8 @@ namespace fbapp.LocalData
         {
             return _database.Table<DTRLog>()
 				.Where(i => i.BioId == bioId && i.LogType == logType)
-				.FirstOrDefaultAsync();
+				.OrderByDescending(i => i.Log)
+                .FirstOrDefaultAsync();
         }
 
         public Task<int> DeleteDTRLogAsync(DTRLog log)
